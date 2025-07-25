@@ -1,18 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: cluster-resources
-    labels:
-      app: cluster-resources
+    name: yo-team-test
 spec:
     project: default
     source:
       repoURL: https://github.com/yogesh-shelke-nttd/argo-servicemesh
       targetRevision: main
-      subPath: 'argocd-onboarding'
+      path: yo-team-test/
     destination:
         server: https://kubernetes.default.svc
-        namespace: argocd
+        namespace: yo-development
     syncPolicy:
         automated:
             prune: true
