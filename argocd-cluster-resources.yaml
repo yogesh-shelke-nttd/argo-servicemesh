@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: cluster-resources
+    labels:
+      app: cluster-resources
+spec:
+    project: default
+    source:
+      repoURL: https://github.com/yogesh-shelke-nttd/argo-servicemesh
+      targetRevision: main
+      subPath: 'argocd-onboarding'
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+    syncPolicy:
+        automated:
+            prune: true
+            selfHeal: true
+        syncOptions:
+            - CreateNamespace=false
+            - PruneLast=true
+            - Validate=true
+            - PrunePropagationPolicy=foreground
+        retry:
+            limit: 5
+            backoff:
+                duration: 5s
+                maxDuration: 1m

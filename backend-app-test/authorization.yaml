@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: backend-app-test
+  namespace: yo-development
+spec:
+  selector:
+    matchLabels:
+      app: backend-app-test
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/yo-run-istio-ingress/sa/istio-ingressgateway
+              - cluster.local/ns/yo-development/sa/frontend-app-test

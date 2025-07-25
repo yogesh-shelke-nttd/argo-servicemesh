@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: frontend-app-test
+  namespace: yo-development
+spec:
+  gateways:
+    - yo-run-istio-ingress/yo-gateway
+  hosts:
+    - "*"
+  http:
+    - match:
+        - uri:
+            prefix: "/"
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: frontend-app-test
+            port:
+              number: 80

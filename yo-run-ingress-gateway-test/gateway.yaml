@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+    name: yo-gateway
+    namespace: yo-run-istio-ingress
+spec:
+    selector:
+        istio: ingressgateway # use Istio default gateway implementation
+    servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+      - "*"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+          - "*"
+      tls:
+        mode: SIMPLE
+        credentialName: yo-ingressgateway-certs # must be the same as the secret created in the namespace yo-run-istio-ingress
