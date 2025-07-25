@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app-test
+  namespace: yo-development
+  labels:
+    app: frontend-app-test
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+    prometheus.io/path: "/metrics"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-app-test
+  template:
+    metadata:
+      labels:
+        app: frontend-app-test
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: frontend-app-test
+      containers:
+        - name: frontend-app-test
+          image: yogesh1924/frontend:v6
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"

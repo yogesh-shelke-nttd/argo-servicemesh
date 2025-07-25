@@ -1,0 +1,9 @@
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: envoy-telemetry
+  namespace: yo-development
+spec:
+  accessLogging:
+    - providers:
+        - name: envoy

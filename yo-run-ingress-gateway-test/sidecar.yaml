@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: istio-ingressgateway
+  namespace: yo-run-istio-ingress
+spec:
+  workloadSelector:
+    labels:
+      istio: ingressgateway
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY
+  egress:
+    - hosts:
+        -  "kube-system/*"
+        - "./*"

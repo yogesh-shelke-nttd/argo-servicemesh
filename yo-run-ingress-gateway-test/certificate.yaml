@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: yo-ingressgateway-certs
+  namespace: yo-run-istio-ingress
+spec:
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+  secretName: yo-ingressgateway-certs
+  usages:
+    - digital signature
+    - key encipherment

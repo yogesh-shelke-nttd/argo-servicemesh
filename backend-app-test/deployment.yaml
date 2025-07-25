@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app-test
+  namespace: yo-development
+  labels:
+    app: backend-app-test
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5000"
+    prometheus.io/path: "/metrics"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-app-test
+  template:
+    metadata:
+      labels:
+        app: backend-app-test
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: backend-app-test
+      containers:
+        - name: backend-app-test
+          image: yogesh1924/backend:v5
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"

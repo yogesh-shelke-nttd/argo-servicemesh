@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-app-test
+  namespace: yo-development
+spec:
+  selector:
+    app: frontend-app-test
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  internalTrafficPolicy: Cluster
+

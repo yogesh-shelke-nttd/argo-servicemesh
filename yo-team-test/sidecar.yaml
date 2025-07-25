@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Sidecar
+metadata:
+  name: default
+  namespace: yo-development
+spec:
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY
+  egress:
+    - hosts:
+        - "kube-system/*"
+        - "./*"
