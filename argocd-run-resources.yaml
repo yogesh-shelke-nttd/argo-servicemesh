@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yo-ingress-gateway
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/yogesh-shelke-nttd/argo-servicemesh
+    targetRevision: main
+    path: yo-run-ingress-gateway-test/
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: yo-run-ingress-gateway-test
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - PruneLast=true
+      - Validate=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 1m
