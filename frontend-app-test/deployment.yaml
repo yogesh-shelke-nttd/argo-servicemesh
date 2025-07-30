@@ -23,7 +23,7 @@ spec:
       serviceAccountName: frontend-app-test
       containers:
         - name: frontend-app-test
-          image: yogesh1924/frontend:v7
+          image: yogesh1924/frontend:v8
           ports:
             - containerPort: 80
           resources:
