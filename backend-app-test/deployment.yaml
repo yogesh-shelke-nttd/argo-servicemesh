@@ -23,7 +23,7 @@ spec:
       serviceAccountName: backend-app-test
       containers:
         - name: backend-app-test
-          image: yogesh1924/backend:v8
+          image: yogesh1924/backend:v9
           ports:
             - containerPort: 5000
           resources:
