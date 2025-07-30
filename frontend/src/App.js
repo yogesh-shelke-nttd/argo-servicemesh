@@ -4,7 +4,7 @@ function App() {
     const [data, setData] = useState('');
 
     const fetchData = async () => {
-        const response = await fetch('http://localhost:80/api/data');
+        const response = await fetch('http://localhost:8082/api/data');
         const result = await response.json();
         setData(result.message);
     };
