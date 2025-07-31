@@ -1,0 +1,96 @@
++-----------------------------------------------------------+
+|                  KUBERNETES CLUSTER                        |
+|  +---------------------+   +--------------------------+    |
+|  |      ARGO CD        |   |  YO-RUN-ISTIO-INGRESS   |    |
+|  |                     |   |                          |    |
+|  | +---------------+   |   | +----------------------+ |    |
+|  | |   Argo CD     |   |   | | Istio Ingress        | |    |
+|  | |  Controller   |   |   | |    Gateway           | |    |
+|  | +---------------+   |   | | (Pod ports: 8080/8443)| |    |
+|  |         |           |   | +----------------------+ |    |
+|  | +---------------+   |   |           ^              |    |
+|  | |     Argo      |---+---+--+        |              |    |
+|  | |  Application  |   |   |  |        |              |    |
+|  | +---------------+   |   |  |        |              |    |
+|  |         |           |   |  |        |              |    |
+|  +---------|-----------+   |  |        |              |    |
+|            |               | +----------------------+ |    |
+|            |               | | Service:             | |    |
+|            |               | | istio-ingressgateway | |    |
+|            |               | | ports: 80→8080       | |    |
+|            |               | |        443→8443      | |    |
+|            |               | +----------------------+ |    |
+|            |               |           ^              |    |
+|            |               | +----------------------+ |    |
+|            |               | | ServiceAccount       | |    |
+|            |               | | RoleBinding          | |    |
+|            |               | | Sidecar Config       | |    |
+|            |               | | Telemetry Config     | |    |
+|            |               | +----------------------+ |    |
+|            |               +-----------|-------------+    |
+|            |                           |                  |
+|            |                           | HTTP/HTTPS (80/443)
+|            |                           v                  |
+|            |               +---------------------------+  |
+|            |               |   YO-DEVELOPMENT          |  |
+|            |               |                           |  |
+|            |               | +----------------------+  |  |
+|            +--------------->| Frontend Applications  |  |  |
+|            |               | | (Service: frontend-   |  |  |
+|            |               | | app-test, Port: 80)   |  |  |
+|            |               | +----------|-----------+  |  |
+|            |               |            |              |  |
+|            |               |            | HTTP/gRPC    |  |
+|            |               |            | (Port: 5000) |  |
+|            |               |            v              |  |
+|            |               | +----------------------+  |  |
+|            +--------------->| Backend Applications   |  |  |
+|                            | | (Service: backend-    |  |  |
+|                            | | app-test, Port: 5000) |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | Sidecar Config       |  |  |
+|                            | | - intercepts all     |  |  |
+|                            | |   inbound/outbound   |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | PeerAuth (mTLS)      |  |  |
+|                            | | - enforces TLS       |  |  |
+|                            | |   on all traffic     |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | AuthPolicy           |  |  |
+|                            | | - default deny-all   |  |  |
+|                            | +----------------------+  |  |
+|                            +---------------------------+  |
++-----------------------------------------------------------+
+         ^
+         |
++------------------+        +------------------+
+|    GitHub        |        |   External       |
+|   Repository     |        |    Traffic       |
++------------------+        +------------------+
+
+KEY INTERACTIONS:
+1. GitHub Repository → Argo CD (source)
+2. Argo CD Controller → Argo Application (manages)
+3. Argo Application → Ingress, Frontend & Backend components (deploys/configures)
+4. External Traffic → Istio Ingress Gateway (HTTP/HTTPS)
+5. Istio Ingress Gateway → Frontend Applications (STRICT mTLS)
+6. Frontend Applications → Backend Applications (STRICT mTLS)
+
+PORT DETAILS:
+- External traffic: 80/443 (HTTP/HTTPS)
+- Istio Ingress Gateway: 80→8080, 443→8443
+- Frontend Applications: Service port 80, targetPort 80 (frontend-app-test)
+- Backend Applications: Service port 5000, targetPort 5000 (backend-app-test)
+- All internal communications use mTLS for encryption
+
+SECURITY FEATURES:
+- Mutual TLS (mTLS) encryption between services
+- Restrictive egress traffic policy (REGISTRY_ONLY)
+- Default deny-all authorization policy
+- Service account with specific RBAC permissions
