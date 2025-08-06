@@ -2,7 +2,7 @@ apiVersion: telemetry.istio.io/v1
 kind: Telemetry
 metadata:
   name: envoy-telemetry
-  namespace: yo-run-istio-ingress
+  namespace: yo-istio-ingress
 spec:
   accessLogging:
     - providers:

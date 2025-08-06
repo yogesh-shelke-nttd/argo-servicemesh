@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
     name: yo-gateway
-    namespace: yo-run-istio-ingress
+    namespace: yo-istio-ingress
 spec:
     selector:
         istio: ingressgateway # use Istio default gateway implementation
@@ -21,4 +21,4 @@ spec:
           - "*"
       tls:
         mode: SIMPLE
-        credentialName: yo-ingressgateway-certs # must be the same as the secret created in the namespace yo-run-istio-ingress
+        credentialName: yo-ingressgateway-certs # must be the same as the secret created in the namespace yo-istio-ingress

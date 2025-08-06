@@ -8,7 +8,7 @@ This repository contains the configuration for a Kubernetes-based microservice a
 +-----------------------------------------------------------+
 |                  KUBERNETES CLUSTER                        |
 |  +---------------------+   +--------------------------+    |
-|  |      ARGO CD        |   |  YO-RUN-ISTIO-INGRESS   |    |
+|  |      ARGO CD        |   |  YO-ISTIO-INGRESS   |    |
 |  |                     |   |                          |    |
 |  | +---------------+   |   | +----------------------+ |    |
 |  | |   Argo CD     |   |   | | Istio Ingress        | |    |
@@ -28,29 +28,58 @@ This repository contains the configuration for a Kubernetes-based microservice a
 |            |               | |        443→8443      | |    |
 |            |               | +----------------------+ |    |
 |            |               |           ^              |    |
-|            |               +-----------|--------------+    |
-|            |                           |                   |
+|            |               | +----------------------+ |    |
+|            |               | | ServiceAccount       | |    |
+|            |               | | RoleBinding          | |    |
+|            |               | | Sidecar Config       | |    |
+|            |               | | Telemetry Config     | |    |
+|            |               | +----------------------+ |    |
+|            |               +-----------|-------------+    |
+|            |                           |                  |
 |            |                           | HTTP/HTTPS (80/443)
-|            |                           v                   |
-|            |               +---------------------------+   |
-|            |               |   YO-DEVELOPMENT          |   |
-|            |               |                           |   |
-|            |               | +----------------------+  |   |
-|            +--------------->| Frontend Applications  |  |   |
-|            |               | | (Service: frontend-   |  |   |
-|            |               | | app-test, Port: 80)   |  |   |
-|            |               | +----------|-----------+  |   |
-|            |               |            |              |   |
-|            |               |            | HTTP/gRPC    |   |
-|            |               |            | (Port: 5000) |   |
-|            |               |            v              |   |
-|            |               | +----------------------+  |   |
-|            +--------------->| Backend Applications   |  |   |
-|                            | | (Service: backend-    |  |   |
-|                            | | app-test, Port: 5000) |  |   |
-|                            | +----------------------+  |   |
-|                            +---------------------------+   |
+|            |                           v                  |
+|            |               +---------------------------+  |
+|            |               |   YO-DEVELOPMENT          |  |
+|            |               |                           |  |
+|            |               | +----------------------+  |  |
+|            +--------------->| Frontend Applications  |  |  |
+|            |               | | (Service: frontend-   |  |  |
+|            |               | | app, Port: 80)   |  |  |
+|            |               | +----------|-----------+  |  |
+|            |               |            |              |  |
+|            |               |            | HTTP/gRPC    |  |
+|            |               |            | (Port: 5000) |  |
+|            |               |            v              |  |
+|            |               | +----------------------+  |  |
+|            +--------------->| Backend Applications   |  |  |
+|                            | | (Service: backend-    |  |  |
+|                            | | app, Port: 5000) |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | Sidecar Config       |  |  |
+|                            | | - intercepts all     |  |  |
+|                            | |   inbound/outbound   |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | PeerAuth (mTLS)      |  |  |
+|                            | | - enforces TLS       |  |  |
+|                            | |   on all traffic     |  |  |
+|                            | +----------------------+  |  |
+|                            |                           |  |
+|                            | +----------------------+  |  |
+|                            | | AuthPolicy           |  |  |
+|                            | | - default deny-all   |  |  |
+|                            | +----------------------+  |  |
+|                            +---------------------------+  |
 +-----------------------------------------------------------+
+         ^
+         |
++------------------+        +------------------+
+|    GitHub        |        |   External       |
+|   Repository     |        |    Traffic       |
++------------------+        +------------------+
 ```
 
 ## Components
@@ -68,7 +97,7 @@ Istio provides traffic management, security, and observability features for our 
 
 #### Istio Ingress Gateway
 
-- **Namespace**: `yo-run-istio-ingress`
+- **Namespace**: `yo-istio-ingress`
 - **Service**: `istio-ingressgateway`
 - **Ports**: 
   - 80 → 8080 (HTTP)
@@ -88,14 +117,14 @@ The sidecar injector automatically injects Envoy proxy containers into applicati
 #### Frontend Application
 
 - **Namespace**: `yo-development`
-- **Service**: `frontend-app-test`
+- **Service**: `frontend-app`
 - **Port**: 80
 - **Function**: Serves the user interface
 
 #### Backend Application
 
 - **Namespace**: `yo-development`
-- **Service**: `backend-app-test`
+- **Service**: `backend-app`
 - **Port**: 5000
 - **Function**: Provides API endpoints and business logic
 

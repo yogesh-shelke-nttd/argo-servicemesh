@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-app-test
+  name: backend-app
   namespace: yo-development
   labels:
-    app: backend-app-test
+    app: backend-app
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "5000"
@@ -13,16 +13,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend-app-test
+      app: backend-app
   template:
     metadata:
       labels:
-        app: backend-app-test
+        app: backend-app
         sidecar.istio.io/inject: "true"
     spec:
-      serviceAccountName: backend-app-test
+      serviceAccountName: backend-app
       containers:
-        - name: backend-app-test
+        - name: backend-app
           image: yogesh1924/backend:v10
           ports:
             - containerPort: 5000
