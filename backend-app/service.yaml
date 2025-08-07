@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-app-test
+  name: backend-app
   namespace: yo-development
   labels:
-    app: backend-app-test
+    app: backend-app
 spec:
   selector:
-    app: backend-app-test
+    app: backend-app
   ports:
     - protocol: TCP
       port: 5000

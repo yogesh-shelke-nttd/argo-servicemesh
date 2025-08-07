@@ -1,20 +1,20 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: frontend-app-test
+  name: frontend-app
   namespace: yo-development
 spec:
     selector:
       matchLabels:
-        app: frontend-app-test
+        app: frontend-app
     action: ALLOW
     rules:
         - { }
 #        - from:
 #            - source:
 #                principals:
-#                  - cluster.local/ns/yo-run-istio-ingress/sa/istio-ingressgateway
-#                  - cluster.local/ns/yo-development/sa/backend-app-test
+#                  - cluster.local/ns/yo-istio-ingress/sa/istio-ingressgateway
+#                  - cluster.local/ns/yo-development/sa/backend-app
 
     # This policy allows traffic from the Istio ingress gateway to the frontend application.
     # It is used to control access to the frontend application in the yo-development namespace.

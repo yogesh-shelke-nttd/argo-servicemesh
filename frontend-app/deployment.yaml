@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-app-test
+  name: frontend-app
   namespace: yo-development
   labels:
-    app: frontend-app-test
+    app: frontend-app
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "80"
@@ -13,16 +13,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend-app-test
+      app: frontend-app
   template:
     metadata:
       labels:
-        app: frontend-app-test
+        app: frontend-app
         sidecar.istio.io/inject: "true"
     spec:
-      serviceAccountName: frontend-app-test
+      serviceAccountName: frontend-app
       containers:
-        - name: frontend-app-test
+        - name: frontend-app
           image: yogesh1924/frontend:v8
           ports:
             - containerPort: 80

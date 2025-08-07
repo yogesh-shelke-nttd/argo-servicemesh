@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-app-test
+  name: frontend-app
   namespace: yo-development
 spec:
   selector:
-    app: frontend-app-test
+    app: frontend-app
   ports:
     - protocol: TCP
       port: 80

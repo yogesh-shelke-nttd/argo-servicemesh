@@ -1,7 +1,7 @@
 +-----------------------------------------------------------+
 |                  KUBERNETES CLUSTER                        |
 |  +---------------------+   +--------------------------+    |
-|  |      ARGO CD        |   |  YO-RUN-ISTIO-INGRESS   |    |
+|  |      ARGO CD        |   |  YO-ISTIO-INGRESS   |    |
 |  |                     |   |                          |    |
 |  | +---------------+   |   | +----------------------+ |    |
 |  | |   Argo CD     |   |   | | Istio Ingress        | |    |
@@ -37,7 +37,7 @@
 |            |               | +----------------------+  |  |
 |            +--------------->| Frontend Applications  |  |  |
 |            |               | | (Service: frontend-   |  |  |
-|            |               | | app-test, Port: 80)   |  |  |
+|            |               | | app, Port: 80)   |  |  |
 |            |               | +----------|-----------+  |  |
 |            |               |            |              |  |
 |            |               |            | HTTP/gRPC    |  |
@@ -46,7 +46,7 @@
 |            |               | +----------------------+  |  |
 |            +--------------->| Backend Applications   |  |  |
 |                            | | (Service: backend-    |  |  |
-|                            | | app-test, Port: 5000) |  |  |
+|                            | | app, Port: 5000) |  |  |
 |                            | +----------------------+  |  |
 |                            |                           |  |
 |                            | +----------------------+  |  |
@@ -85,8 +85,8 @@ KEY INTERACTIONS:
 PORT DETAILS:
 - External traffic: 80/443 (HTTP/HTTPS)
 - Istio Ingress Gateway: 80→8080, 443→8443
-- Frontend Applications: Service port 80, targetPort 80 (frontend-app-test)
-- Backend Applications: Service port 5000, targetPort 5000 (backend-app-test)
+- Frontend Applications: Service port 80, targetPort 80 (frontend-app)
+- Backend Applications: Service port 5000, targetPort 5000 (backend-app)
 - All internal communications use mTLS for encryption
 
 SECURITY FEATURES:
