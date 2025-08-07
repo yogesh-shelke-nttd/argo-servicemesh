@@ -11,7 +11,7 @@ spec:
     path: yo-ingress-gateway
   destination:
     server: https://kubernetes.default.svc
-    namespace: yo-run-istio-ingress
+    namespace: yo-istio-ingress
   syncPolicy:
     automated:
       prune: true

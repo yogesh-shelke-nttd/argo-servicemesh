@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/yogesh-shelke-nttd/argo-servicemesh
     targetRevision: main
-    path: backend-app-test
+    path: backend-app
   destination:
     server: https://kubernetes.default.svc
     namespace: yo-development
