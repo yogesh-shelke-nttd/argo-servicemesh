@@ -80,6 +80,27 @@ This repository contains the configuration for a Kubernetes-based microservice a
 |    GitHub        |        |   External       |
 |   Repository     |        |    Traffic       |
 +------------------+        +------------------+
+
+KEY INTERACTIONS:
+1. GitHub Repository → Argo CD (source)
+2. Argo CD Controller → Argo Application (manages)
+3. Argo Application → Ingress, Frontend & Backend components (deploys/configures)
+4. External Traffic → Istio Ingress Gateway (HTTP/HTTPS)
+5. Istio Ingress Gateway → Frontend Applications (STRICT mTLS)
+6. Frontend Applications → Backend Applications (STRICT mTLS)
+
+PORT DETAILS:
+- External traffic: 80/443 (HTTP/HTTPS)
+- Istio Ingress Gateway: 80→8080, 443→8443
+- Frontend Applications: Service port 80, targetPort 80 (frontend-app)
+- Backend Applications: Service port 5000, targetPort 5000 (backend-app)
+- All internal communications use mTLS for encryption
+
+SECURITY FEATURES:
+- Mutual TLS (mTLS) encryption between services
+- Restrictive egress traffic policy (REGISTRY_ONLY)
+- Default deny-all authorization policy
+- Service account with specific RBAC permissions
 ```
 
 ## Components
@@ -155,30 +176,81 @@ The sidecar injector automatically injects Envoy proxy containers into applicati
 - **Mode**: REGISTRY_ONLY
 - **Function**: Only allows outbound traffic to registered external services, preventing data exfiltration
 
-## Traffic Flow
-
-1. **External → Ingress**:
-   - External traffic arrives at the Istio Ingress Gateway on ports 80/443
-   - TLS termination happens at the gateway (for HTTPS)
-
-2. **Ingress → Frontend**:
-   - Traffic is routed to the frontend service on port 80
-   - Communication is secured with mTLS
-   - Authorization policies verify access is allowed
-
-3. **Frontend → Backend**:
-   - Frontend communicates with backend on port 5000
-   - All traffic is secured with mTLS
-   - Sidecar proxies handle retries, timeouts, and circuit breaking
-
-## Setup and Configuration
+## Installation Guide
 
 ### Prerequisites
 
-- Kubernetes cluster
-- Istio installed
-- Argo CD installed
-- Kubectl and Git CLI tools
+- Kubernetes cluster up and running
+- `kubectl` CLI tool installed
+- Homebrew installed (for macOS users)
+- Git CLI tool installed
+
+### 1. Installing Argo CD
+
+Deploy Argo CD to your Kubernetes cluster:
+
+```bash
+# Create the argocd namespace if it doesn't exist
+kubectl create namespace argocd
+
+# Install Argo CD components
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Access the Argo CD UI:
+
+```bash
+# Port forward the Argo CD server
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Get the initial admin password
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+You can now access the UI at https://localhost:8080 with username `admin` and the password retrieved above.
+
+### 2. Installing Istio
+
+Install the Istio CLI and deploy Istio components:
+
+```bash
+# Install istioctl using Homebrew
+brew install istioctl
+
+# Install Istio with the demo profile
+istioctl install --set profile=demo -y
+
+# Enable Istio sidecar injection in the default namespace
+kubectl label namespace default istio-injection=enabled
+
+```
+### 3. Installing Monitoring Tools
+
+Deploy Kiali dashboard for service mesh visualization:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.26/samples/addons/kiali.yaml
+```
+
+Deploy Grafana for metrics visualization:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/grafana.yaml
+```
+
+Access the dashboards:
+
+```bash
+# Kiali dashboard
+kubectl port-forward svc/kiali -n istio-system 20001:20001
+
+# Grafana dashboard
+kubectl port-forward svc/grafana -n istio-system 3000:3000
+```
+
+Access Kiali at http://localhost:20001 and Grafana at http://localhost:3000.
+
+## Setup and Configuration
 
 ### Deployment
 
