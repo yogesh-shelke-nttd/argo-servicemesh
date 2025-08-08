@@ -13,7 +13,7 @@ This repository contains the configuration for a Kubernetes-based microservice a
 |  | +---------------+   |   | +----------------------+ |    |
 |  | |   Argo CD     |   |   | | Istio Ingress        | |    |
 |  | |  Controller   |   |   | |    Gateway           | |    |
-|  | +---------------+   |   | | (Pod ports: 8080/8443)| |    |
+|  | +---------------+   |   | | (Pod ports: 8080/8443)| |   |
 |  |         |           |   | +----------------------+ |    |
 |  | +---------------+   |   |           ^              |    |
 |  | |     Argo      |---+---+--+        |              |    |
@@ -231,13 +231,16 @@ Deploy Kiali dashboard for service mesh visualization:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.26/samples/addons/kiali.yaml
 ```
-
 Deploy Grafana for metrics visualization:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/grafana.yaml
 ```
+Deploy Prometheus for metrics collection:
 
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/prometheus.yaml
+```
 Access the dashboards:
 
 ```bash
@@ -256,7 +259,7 @@ Access Kiali at http://localhost:20001 and Grafana at http://localhost:3000.
 
 1. Apply the Argo CD application manifest:
    ```
-   kubectl apply -f argocd/applications.yaml
+   kubectl apply -f argocd/applications.yaml -n argocd
    ```
 
 2. Argo CD will automatically sync and deploy all components:
